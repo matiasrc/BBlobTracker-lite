@@ -1,5 +1,5 @@
 # BBlobTracker-lite
-Software de detección de manchas (Blob trcking) utilizanzo substracción de fondo, realizado con OpenFrameworks
+Software de detección de manchas (Blob trcking) utilizanzo substracción de fondo, realizado con [OpenFrameworks](https://openframeworks.cc/) 
 
 
 ## DEPENDENCIES ##
