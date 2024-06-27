@@ -1,5 +1,5 @@
 # BBlobTracker-lite
-Software de detección de manchas (Blob trcking) utilizanzo substracción de fondo, realizado con [OpenFrameworks](https://openframeworks.cc/) 
+Software de detección de manchas (Blob trcaking) utilizanzo substracción de fondo, realizado con [OpenFrameworks](https://openframeworks.cc/) 
 
 
 ## DEPENDENCIES ##
@@ -14,11 +14,6 @@ ofxXmlSettings (included in Of Core)
 
 [ofxImGui](https://github.com/jvcleave/ofxImGui)
 
-[ofxSyphon](https://github.com/astellato/ofxSyphon)
-
-[ofxSpout](https://github.com/elliotwoods/ofxSpout)
-
-
 
 ### TODO ###
 
@@ -28,4 +23,4 @@ ofxXmlSettings (included in Of Core)
 - calibración (Quad Warping) de la imagen de entrada
 
 ## PRE RELEASES ##
-[Binaries / ejecutables](https://github.com/matiasrc/BBtracker/releases) OSX & Win 64bit
+[Binaries / ejecutables](https://github.com/matiasrc/BBlobTracker-lite/releases/tag/v.0.1) OSX
