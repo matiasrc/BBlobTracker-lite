@@ -52,23 +52,7 @@ public:
     bool                    hMirror, vMirror;
         
     //-----------------SYPHON ------------------
-    /*
-    ofxSyphonServer syphonServer;
-    ofxSyphonClient syphonClient;
-    */
     
-    //----------------- WARP -------------------
-    /*
-    bool                    warpON;
-    ofPoint                 warp[4];
-    ofRectangle             corner[4];
-    ofPoint                 A, B, C, D;
-    int                     cualPunto;
-    bool                    moverPunto;
-    int                     paso;
-    bool                    resetWarping;
-    void                    warpingReset();
-     */
     
     //----------------- BG SUBTRACTION -------------------
     ofxCvGrayscaleImage     grayImg;
@@ -82,6 +66,8 @@ public:
     
     bool                    bLearnBackground;
     bool                    clearBg;
+    void                    loadBackgroundImage();
+    void                    saveBackgroundImage();
     
     //---------------- CONTOUR FINDER --------------------
     ofxCv::ContourFinder    contourFinder;

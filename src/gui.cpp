@@ -110,18 +110,7 @@ void ofApp::drawGui(){
                 ImGui::NewLine();
                 ImGui::Checkbox("ESPEJAR HORIZONTAL", &hMirror);
                 ImGui::Checkbox("ESPEJAR VERTICAL", &vMirror);
-                
-                /*
-                ImGui::Separator(); ImGui::Separator();
-                
-                ImGui::Text("Ajustar perspectiva");
-                ImGui::SameLine(); HelpMarker("Ajuste de perspectiva de la imagen de entrada -> seleccionar los puntos con las teclas 1, 2, 3 y 4 ||  mover con el mouse o las flechas del teclado");
-                ImGui::Checkbox("habilitar (tecla w)", &warpON);
-                ImGui::InputInt("paso", &paso);
-                if (ImGui::Button("Resetear perspectiva")){
-                     resetWarping = true;
-                }
-                 */
+  
             ImGui::EndMenu();
         }
         

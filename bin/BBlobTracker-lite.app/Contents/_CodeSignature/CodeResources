@@ -4,6 +4,10 @@
 <dict>
 	<key>files</key>
 	<dict>
+		<key>Resources/imgui.ini</key>
+		<data>
+		DvsHRv2kYZjM2kOsmWCIj0UHfcQ=
+		</data>
 		<key>Resources/of.icns</key>
 		<data>
 		a3Fd3s3Ae1/WnnSvwTbkPgp3Ue0=
@@ -28,6 +32,13 @@
 			</data>
 			<key>requirement</key>
 			<string>cdhash H"30a8927be625eff97a95d3ed18f5f89c4443a858" or cdhash H"018b81a7b3d48bcbe501e27349ae896bd45f346b" or cdhash H"b8d9e77c899f5e4aa99edbbf57d4aaaf0acba414" or cdhash H"ca0c9d112cec237bcb28905adfd5a82eefbeaa4d"</string>
+		</dict>
+		<key>Resources/imgui.ini</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			B/Qsn6yVpXdNwEhyk61KfSzImAJ2UEdOFWIvGuPgRsw=
+			</data>
 		</dict>
 		<key>Resources/of.icns</key>
 		<dict>

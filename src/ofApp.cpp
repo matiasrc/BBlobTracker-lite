@@ -24,27 +24,7 @@ void ofApp::setup() {
     mirroredImg.allocate(camWidth,camHeight);
     
     //-----------------SYPHON ------------------
-    /*
-    syphonServer.setName("BBlobTracker output");
-    syphonClient.setup();
-    syphonClient.set("", "Simple Server");
-
-    #if __APPLE__
-    
-    #else
-    
-    #endif
-    */
-    
-    //----------------- WARP -------------------
-    /*
-    warpON =  false;
-    cualPunto = 0;
-   
-    moverPunto = false;
-    
-    warpedImg.allocate(camWidth,camHeight);
-    */
+ 
     
     //-------BG SUBTRACTION ------
     grayImg.allocate(camWidth,camHeight);
@@ -54,6 +34,8 @@ void ofApp::setup() {
     
     bLearnBackground = false;
     clearBg = false;
+    
+    loadBackgroundImage();
     
     //-----------COUNTOUR FINDER ---------
     contourFinder.setThreshold(threshold);
@@ -87,9 +69,6 @@ void ofApp::update() {
         
         mirroredImg.setFromPixels(cam.getPixels());
         mirroredImg.mirror(vMirror, hMirror);
-
-        //warpedImg = mirroredImg;
-        //warpedImg.warpPerspective(warp[0], warp[1], warp[2], warp[3]);
                 
         //------BG SUBTRACTION-------------
         grayImg = mirroredImg;
@@ -134,7 +113,6 @@ void ofApp::update() {
         //------- OSC ---------
         updateOsc();
     }
-    //warpingReset();
 }
 
 void ofApp::draw() {
@@ -172,38 +150,7 @@ void ofApp::draw() {
     }
     ofPopStyle();
     
-    /*
-    if(warpON){
-        ofPushStyle();
-        ofFill();
-        ofPolyline pl;
-        
-        float cornerSize = 15;
-        
-        for(int i=0; i<4; i++){
-            float x = warp[i].x / camWidth * w;
-            float y = (warp[i].y / camHeight * h);
-        
-            pl.addVertex(x, y);
-            
-            corner[i].setFromCenter(x, y, cornerSize, cornerSize);
-            
-            ofFill();
-            //ofDrawCircle(x, y, 5);
-            if(i == cualPunto){
-                ofSetColor(255, 0, 0);
-            }else{
-                ofSetColor(0, 255, 255);
-            }
-            ofDrawRectangle(corner[i]);
-        }
-        ofSetColor(0, 255, 255);
-        pl.close();
-        pl.draw();
-        ofPopStyle();
-    }else{
-    }
-    */
+
     ofPushStyle();
     ofSetColor(0, 255, 0);
     
@@ -269,28 +216,8 @@ void ofApp::draw() {
     }
     ofPopStyle();
     
-    /*
     //-----------------SYPHON & SPOUT ------------------
-       
-    //syphonClient.draw(0, 0);
-    int screenWidth = ofGetWidth();
-    int screenHeight = ofGetHeight();
-       
-    tex.allocate(screenWidth, screenHeight, GL_RGBA);
-    tex.loadScreenData(0, 0, screenWidth, screenHeight);
-    syphonServer.publishTexture(&tex);
-    //syphonServer.publishScreen();
-       
-    #if __APPLE__
-       
-    #else
-       
-    #endif
-       
-    tex.clear();
-     
-    */
-    
+
     //----------------- GUI -------------------
     drawGui();
     ofSetWindowTitle("FPS: " + ofToString(ofGetFrameRate()));
@@ -302,49 +229,18 @@ void ofApp::keyPressed(ofKeyEventArgs& e){
     #if __APPLE__
     if(e.key == 's' && e.hasModifier(OF_KEY_COMMAND)){
         saveSettings();
+        saveBackgroundImage();
     }
     #else
     if(e.key == 19 ){
         saveSettings();
+        saveBackgroundImage();
     }
     
     #endif
     else if(e.key == ' '){
         bLearnBackground = true;
     }
-    /*
-    else if(e.key == '1'){
-        cualPunto = 0;
-    }
-    else if(e.key == '2'){
-        cualPunto = 1;
-    }
-    else if(e.key == '3'){
-        cualPunto = 2;
-    }
-    else if(e.key == '4'){
-        cualPunto = 3;
-    }
-    else if(e.key == 'w'){
-        warpON = !warpON;
-    }
-    else if(e.key == OF_KEY_LEFT && warpON){
-        warp[cualPunto].x -= paso;
-        warp[cualPunto].x = ofClamp(warp[cualPunto].x, 0, camWidth);
-    }
-    else if(e.key == OF_KEY_RIGHT && warpON){
-        warp[cualPunto].x += paso;
-        warp[cualPunto].x = ofClamp(warp[cualPunto].x, 0, camWidth);
-    }
-    else if(e.key == OF_KEY_UP && warpON){
-        warp[cualPunto].y -= paso;
-        warp[cualPunto].y = ofClamp(warp[cualPunto].y, 0, camHeight);
-    }
-    else if(e.key == OF_KEY_DOWN && warpON){
-        warp[cualPunto].y += paso;
-        warp[cualPunto].y = ofClamp(warp[cualPunto].y, 0, camHeight);
-    }
-    */
 }
 
 //--------------------------------------------------------------
@@ -352,35 +248,43 @@ void ofApp::keyReleased(ofKeyEventArgs& e){
 }
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button) {
-    
-    /*
-    for(int i=0; i<4; i++){
-        if(corner[i].inside(x, y)){
-            cualPunto = i;
-            moverPunto = true;
-            break;
-        }
-    }
-     */
 }
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button) {
-    /*
-    if(moverPunto){
-        if(x >= 0 && x<= w && y>=0 && y <=h){
-            warp[cualPunto].x = ofMap(x, 0, w, 0, camWidth);
-            warp[cualPunto].y = ofMap(y, 0, h, 0, camHeight);
-        }
-    }
-     */
 }
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button) {
-    //moverPunto = false;
+}
+
+//--------------------------------------------------------------
+
+void ofApp::saveBackgroundImage() {
+  ofImage tempImage;
+  tempImage.setFromPixels(grayBg.getPixels());
+  tempImage.save("background.png"); // Puedes cambiar el nombre del archivo aquí
+  ofLogNotice() << "Imagen de fondo guardada como background.png";
+}
+//--------------------------------------------------------------
+void ofApp::loadBackgroundImage() {
+    // Ruta al archivo de imagen (puedes modificarla)
+    string imagePath = "background.png";
+
+    // Crear una instancia temporal de ofImage
+    ofImage tempImage;
+
+    // Intentar cargar la imagen
+    if (tempImage.load(imagePath)) {
+        // Convertir a ofxCvGrayscaleImage
+        grayBg.setFromPixels(tempImage.getPixels());
+        ofLogNotice() << "Imagen de fondo cargada correctamente: " << imagePath;
+    } else {
+        ofLogError() << "Error al cargar la imagen de fondo: " << imagePath;
+    }
 }
 
 //--------------------------------------------------------------
 void ofApp::exit() {
     saveSettings();
+    saveBackgroundImage();
 }
 

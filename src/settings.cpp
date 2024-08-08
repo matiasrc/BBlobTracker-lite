@@ -36,18 +36,7 @@ void ofApp::loadSettings(){
     deviceID = XML.getValue("CAM:DEVICEID", 0);
     hMirror = XML.getValue("CAM:HMIRROR", false);
     vMirror = XML.getValue("CAM:VMIRROR", false);
-    /*
-    paso = XML.getValue("CAM:WARPING:PASO", 5);
-    
-    warp[0].x = XML.getValue("CAM:WARPING:AX", 0);
-    warp[0].y = XML.getValue("CAM:WARPING:Ay", 0);
-    warp[1].x = XML.getValue("CAM:WARPING:BX", camWidth);
-    warp[1].y = XML.getValue("CAM:WARPING:BY", 0);
-    warp[2].x = XML.getValue("CAM:WARPING:CX", camWidth);
-    warp[2].y = XML.getValue("CAM:WARPING:CY", camHeight);
-    warp[3].x = XML.getValue("CAM:WARPING:DX", 0);
-    warp[3].y = XML.getValue("CAM:WARPING:DY", camHeight);
-    */
+
     
     //---------------- OSC --------------------
     puerto = XML.getValue("OSC:PUERTO", 12345);
