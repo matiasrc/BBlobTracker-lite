@@ -94,7 +94,7 @@ void ofApp::saveSettings(){
     //---------------- VER --------------------
     XML.setValue("VIEW:IMAGEVIEW", imageView);
         
-    XML.saveFile("mySettings.xml");
+    XML.save("mySettings.xml");
     xmlMessage ="settings saved to xml!";
     ofLog(OF_LOG_NOTICE,xmlMessage);
 }
