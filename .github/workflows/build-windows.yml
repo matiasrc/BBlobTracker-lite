@@ -1,0 +1,102 @@
+name: Build Windows
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-windows:
+    runs-on: windows-2022
+    env:
+      OF_ROOT: 'C:\openFrameworks'
+      OF_VERSION: '0.12.0'
+      APP_NAME: BBlobTracker-lite
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: microsoft/setup-msbuild@v2
+
+      - name: Install openFrameworks for Visual Studio
+        shell: pwsh
+        run: |
+          $archive = Join-Path $env:RUNNER_TEMP 'openFrameworks.zip'
+          $extract = Join-Path $env:RUNNER_TEMP 'openFrameworks'
+          $asset = "of_v$($env:OF_VERSION)_vs_release.zip"
+          Invoke-WebRequest "https://github.com/openframeworks/openFrameworks/releases/download/$($env:OF_VERSION)/$asset" -OutFile $archive
+          7z x $archive "-o$extract" -y | Out-Null
+          if ($LASTEXITCODE -ne 0) { throw 'Could not extract openFrameworks' }
+          Move-Item (Join-Path $extract "of_v$($env:OF_VERSION)_vs_release") $env:OF_ROOT
+
+      - name: Install external addons
+        shell: pwsh
+        working-directory: ${{ env.OF_ROOT }}/addons
+        run: |
+          git init ofxCv
+          git -C ofxCv fetch --depth 1 https://github.com/kylemcdonald/ofxCv.git 209a3986a8f8e1928c7a11f6e1c5d8ea5406e6397
+          if ($LASTEXITCODE -ne 0) { throw 'Could not fetch ofxCv' }
+          git -C ofxCv checkout --detach FETCH_HEAD
+          if ($LASTEXITCODE -ne 0) { throw 'Could not check out ofxCv' }
+
+          git init ofxImGui
+          git -C ofxImGui fetch --depth 1 https://github.com/jvcleave/ofxImGui.git fc4e5c4679d20a7445e9e0a2ec6ff475f99079e
+          if ($LASTEXITCODE -ne 0) { throw 'Could not fetch ofxImGui' }
+          git -C ofxImGui checkout --detach FETCH_HEAD
+          if ($LASTEXITCODE -ne 0) { throw 'Could not check out ofxImGui' }
+
+      - name: Generate Visual Studio solution
+        shell: pwsh
+        run: |
+          $project = Join-Path $env:OF_ROOT "apps\myApps\$env:APP_NAME"
+          New-Item -ItemType Directory -Force -Path (Join-Path $project 'bin') | Out-Null
+          Copy-Item (Join-Path $env:GITHUB_WORKSPACE 'src') $project -Recurse
+          Copy-Item (Join-Path $env:GITHUB_WORKSPACE 'bin\data') (Join-Path $project 'bin') -Recurse
+          Get-Content (Join-Path $env:GITHUB_WORKSPACE 'addons.make') |
+            Where-Object { $_ -notmatch '^\s*(ofxSyphon|ofxSpout)\s*(#.*)?$' } |
+            Set-Content (Join-Path $project 'addons.make')
+
+          $icon = Get-ChildItem $env:OF_ROOT -Recurse -Filter 'icon.ico' | Select-Object -First 1
+          if ($icon) { Copy-Item $icon.FullName (Join-Path $project 'icon.ico') }
+
+          $generator = Get-ChildItem $env:OF_ROOT -Recurse -Filter '*projectGenerator*.exe' |
+            Where-Object { $_.FullName -match 'resources\\app\\app|commandLine' } |
+            Select-Object -First 1
+          if (-not $generator) { throw 'Project Generator CLI was not found' }
+          & $generator.FullName "-o$env:OF_ROOT" '-pvs' $project
+          if ($LASTEXITCODE -ne 0) { throw 'Project Generator failed' }
+          if (-not (Test-Path (Join-Path $project "$env:APP_NAME.sln"))) {
+            throw "Project Generator did not create $env:APP_NAME.sln"
+          }
+
+      - name: Compile Release x64
+        shell: pwsh
+        working-directory: ${{ env.OF_ROOT }}/apps/myApps/${{ env.APP_NAME }}
+        run: |
+          msbuild "$env:APP_NAME.sln" /p:Configuration=Release /p:Platform=x64 /m /verbosity:minimal
+          if ($LASTEXITCODE -ne 0) { throw 'MSBuild failed' }
+
+      - name: Package executable, data and runtime DLLs
+        shell: pwsh
+        working-directory: ${{ env.OF_ROOT }}/apps/myApps/${{ env.APP_NAME }}
+        run: |
+          $package = Join-Path $env:RUNNER_TEMP $env:APP_NAME
+          New-Item -ItemType Directory -Path $package | Out-Null
+          Copy-Item "bin\$env:APP_NAME.exe" $package
+          Copy-Item 'bin\data' $package -Recurse
+          Get-ChildItem 'bin' -Filter '*.dll' | Copy-Item -Destination $package
+
+          $export = Join-Path $env:OF_ROOT 'export\vs\x64'
+          if (Test-Path $export) {
+            Get-ChildItem $export -Filter '*.dll' | Where-Object {
+              -not (Test-Path (Join-Path $package $_.Name))
+            } | Copy-Item -Destination $package
+          }
+
+          Compress-Archive -Path "$package\*" -DestinationPath "$env:GITHUB_WORKSPACE\$env:APP_NAME-windows-x64.zip"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.APP_NAME }}-windows-x64
+          path: ${{ env.APP_NAME }}-windows-x64.zip
+          if-no-files-found: error
