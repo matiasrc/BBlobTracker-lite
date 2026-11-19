@@ -34,13 +34,13 @@ jobs:
         working-directory: ${{ env.OF_ROOT }}/addons
         run: |
           git init ofxCv
-          git -C ofxCv fetch --depth 1 https://github.com/kylemcdonald/ofxCv.git 209a3986a8f8e1928c7a11f6e1c5d8ea5406e6397
+          git -C ofxCv fetch --depth 1 https://github.com/kylemcdonald/ofxCv.git 209a3986a8f8e1928c7a11f6e1c5d8ea5406e639
           if ($LASTEXITCODE -ne 0) { throw 'Could not fetch ofxCv' }
           git -C ofxCv checkout --detach FETCH_HEAD
           if ($LASTEXITCODE -ne 0) { throw 'Could not check out ofxCv' }
 
           git init ofxImGui
-          git -C ofxImGui fetch --depth 1 https://github.com/jvcleave/ofxImGui.git fc4e5c4679d20a7445e9e0a2ec6ff475f99079e
+          git -C ofxImGui fetch --depth 1 https://github.com/jvcleave/ofxImGui.git 7fc4e5c4679d20a7445e9e0a2ec6ff475f99079e
           if ($LASTEXITCODE -ne 0) { throw 'Could not fetch ofxImGui' }
           git -C ofxImGui checkout --detach FETCH_HEAD
           if ($LASTEXITCODE -ne 0) { throw 'Could not check out ofxImGui' }
